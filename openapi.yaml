@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Generative AI API
+  description: AN API for generating AI models, it can anser prompts and the models can be modified.
+  version: 0.1.9
+
+servers:
+  - url: http://127.0.0.1:5000
+    description: Optional server description, e.g. Main (production) server
+
+paths:
+  /generate:
+    post:
+      summary: Generates text based on prompt
+      tags:
+        - name: Model operations
+      description: Generates text based on prompt
+
+      requestBody:
+        required: true
+        description: The prompt to generate text from
+        content:
+          application/json:
+            schema:
+              $ref: '#/schemas/Prompt'
+              
+      responses:
+        "200":
+          description: The text answered by the model
+          content:
+            application/json:
+              schema:
+                $ref: '#/schemas/Generated_Text'
+        "400":
+          description: There was no prompt given
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request, 'prompt' is required"
+        "401":
+          description: The prompt is not a string or is empty
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Prompt must be a non-empty string"
+        "500":
+          description: No expecte error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Something happened"
+  
+  /change_config:
+    post:
+      summary: Changes the configuration of the model
+      tags:
+        - name: Model operations
+      description: Changes the configuration of the model
+
+      requestBody:
+        required: true
+        description: The configuration to change the model to, it acceps any key value pair, but depending on the model some of them may not be valid
+        content:
+          application/json:
+            schema:
+              $ref: '#/schemas/Config'
+              
+      responses:
+        "200":
+          generated_text: The text answered by the model
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Configuration Applied"
+        "400":
+          description: There was a configuration key not existant for this model
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid config key: temperature"
+        "500":
+          description: No expecte error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Something happened"
+
+schemas:
+  Prompt:
+    type: object
+    properties:
+      prompt:
+        type: string
+        example: "Once upon a time"
+  Generated_Text:
+    type: object
+    properties:
+      generated_text:
+        type: string
+        example: "there was a dragon"
+  Config:
+    type: object
+    properties:
+      max_length:
+        type: string
+        example: 512
+      embd_pdrop:
+        type: string
+        example: 0.1
