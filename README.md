@@ -14,7 +14,7 @@ To run the API locally use the next command in the terminal:
 
     python app.py
 
-If all the dependencies have been correctly installed, in the terminal you should see that he service is running. In the terminal you should see 2 addreses like this:
+If all the dependencies have been correctly installed, in the terminal you should see that the service is running. In the terminal you should see 2 addreses like this:
 
     * Running on http://127.0.0.1:5000
     * Running on http://192.168.1.76:5000
