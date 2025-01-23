@@ -47,3 +47,34 @@ You can change the endpoint to any available in swagger (check next section) to 
 ### CHECK DOCUMENTATION
 
 The API documentation can be accessed going to http://127.0.0.1:5000/docs. It uses swagger.
+
+Here there are some examples of how the api responds when asked to generate text:
+
+    1.
+    Prompt: "Tell me a joke"
+    Answer: "Tell me a joke that should have been addressed sooner so that I can say it without sounding stupid!\" I smiled. \"I've already said it here...\" she said, and then held up a hand. \"And you say, 'I'm a"
+
+    2.
+    Prompt: "Once upon a time"
+    Answer: "Once upon a time, the Great Ones and all the people of the Abyss were under the sway of the Lord of Light! It's time I went out as well!\n\n\"I have made my presence noticed. There are many things I'll"
+
+And here is an example of the answers that have been saved inside the api.
+
+```json
+{
+  "historic": [
+    [
+      "Tell me a joke",
+      "Tell me a joke that should have been addressed sooner so that I can say it without sounding stupid!\" I smiled. \"I've already said it here...\" she said, and then held up a hand. \"And you say, 'I'm a"
+    ],
+    [
+      "Tell me a joke",
+      "Tell me a joke about this.\"\n\n\"It was your friend who had found your body.\"\n\n\"We'll be back.\"\n\n\"Okay.\"\n\nHarry stood and put on his robe. Gilderoy Lockhart was"
+    ],
+    [
+      "Once upon a time",
+      "Once upon a time, the Great Ones and all the people of the Abyss were under the sway of the Lord of Light! It's time I went out as well!\n\n\"I have made my presence noticed. There are many things I'll"
+    ]
+  ]
+}
+```
