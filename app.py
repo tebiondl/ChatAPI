@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 import os
 import torch
+from database import init_db, insert_question, get_questions
 
 
 try:
@@ -27,6 +28,9 @@ except Exception as e:
 # Start flask app
 app = Flask(__name__)
 
+# Initialize the database
+init_db()
+
 '''
 Request Type: POST
 Input Data: {"prompt": "prompt for the generative model"}
@@ -46,12 +50,31 @@ def generate_text():
     
         outputs = pipe(prompt, num_return_sequences=1)
         generated_text = outputs[0]["generated_text"]
+        
+        # Save the question in the database
+        insert_question(prompt, generated_text)   
             
         return jsonify({"generated_text": generated_text})
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+'''
+Request Type: GET
+Output Data: {"historic": [["prompt", "answer of the model"], ["prompt2", "second answer of the model"], ...]}
+'''
+@app.route("/historic", methods=["GET"])
+def get_historic():
+    try:
+        # Get data from the database
+        historic = get_questions()
+            
+        return jsonify({"historic": historic})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
 '''
 Request Type: POST
