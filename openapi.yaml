@@ -2,11 +2,18 @@ openapi: 3.0.0
 info:
   title: Generative AI API
   description: AN API for generating AI models, it can anser prompts and the models can be modified.
-  version: 0.1.9
+  version: 1.0.0
 
 servers:
   - url: http://127.0.0.1:5000
     description: Optional server description, e.g. Main (production) server
+
+components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
 
 paths:
     /generate:
@@ -23,7 +30,8 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/schemas/Prompt'
-                    
+            security:
+                - BearerAuth: []
             responses:
                 "200":
                     description: The text answered by the model
@@ -42,6 +50,16 @@ paths:
                                         type: string
                                         example: "Invalid request, 'prompt' is required"
                 "401":
+                    description: No token given
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: "Missing Authorization Header"
+                "402":
                     description: The prompt is not a string or is empty
                     content:
                         application/json:
@@ -52,7 +70,7 @@ paths:
                                         type: string
                                         example: "Prompt must be a non-empty string"
                 "500":
-                    description: No expecte error
+                    description: No expected error
                     content:
                         application/json:
                             schema:
@@ -77,6 +95,8 @@ paths:
                         schema:
                             $ref: '#/schemas/Config'
                     
+            security:
+                - BearerAuth: []
             responses:
                 "200":
                     generated_text: The text answered by the model
@@ -95,8 +115,18 @@ paths:
                                     error:
                                         type: string
                                         example: "Invalid config key: temperature"
+                "401":
+                    description: No token given
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: "Missing Authorization Header"
                 "500":
-                    description: No expecte error
+                    description: No expected error
                     content:
                         application/json:
                             schema:
@@ -111,7 +141,9 @@ paths:
             tags:
                 - name: Model operations
             description: Returns the generated answers to the prompts
-                    
+            
+            security:
+                - BearerAuth: []
             responses:
                 "200":
                     description: The historic
@@ -119,8 +151,46 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/schemas/Historic'
+                "401":
+                    description: No token given
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: "Missing Authorization Header"
                 "500":
-                    description: No expecte error
+                    description: No expected error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: "Something happened"
+    /login:
+        get:
+            summary: Returns a token to use the API
+            tags:
+                - name: User operations
+            description: Returns a token
+                    
+            responses:
+                "200":
+                    description: The token
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    token:
+                                        type: string
+                                        example: "eyJhbGciOiJIUz"	
+                "500":
+                    description: No expected error
                     content:
                         application/json:
                             schema:
