@@ -14,14 +14,15 @@ To run the API locally use the next command in the terminal:
 
     python app.py
 
-If all the dependencies have been correctly installed, in the terminal you should see that the service is running. In the terminal you should see 2 addreses like this:
+If all the dependencies have been correctly installed, in the terminal you should see that the service is running. In the terminal you should see 2 lines like this:
 
-    * Running on http://127.0.0.1:5000
-    * Running on http://192.168.1.76:5000
+    * Serving Flask app 'app'
+    * Debug mode: off
+
   
 ### CALL THE API
 
-To call the API is very simple, just take the first link showed before (http://127.0.0.1:5000) and use it anywhere tou can call an API, for example using a python script like this (here the library requests is being used, if you want to use it installit with *pip install requests*): 
+To call the API is very simple, just take the first link showed before (localhost:5000) and use it anywhere tou can call an API (Postman, Swagger, etc), for example using a python script like this (here the library requests is being used, if you want to use it, install it with *pip install requests*): 
 
 ```python
 import requests
@@ -46,7 +47,7 @@ You can change the endpoint to any available in swagger (check next section) to 
 
 ### CHECK DOCUMENTATION
 
-The API documentation can be accessed going to http://127.0.0.1:5000/docs. It uses swagger.
+The API documentation can be accessed going to localhost:5000/docs. It uses swagger.
 
 Here there are some examples of how the api responds when asked to generate text:
 
