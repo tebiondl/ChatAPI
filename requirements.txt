@@ -1,6 +1,6 @@
 flask
+dotenv
 transformers
 torch
 accelerate
 Flask-JWT-Extended
-dotenv
