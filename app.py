@@ -2,10 +2,14 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 import os
+import logging
 import torch
 from database import init_db, insert_question, get_questions
 from dotenv import load_dotenv
+
 load_dotenv()
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='test.log', encoding='utf-8', level=logging.DEBUG)
 
 try:
     # Load model
@@ -24,7 +28,10 @@ try:
         tokenizer=tokenizer, 
         device=0 if device == "cuda" else -1
     )
+    
+    logger.info(f"Model {model_id} loaded successfully")
 except Exception as e:
+    logger.error(f"Error loading the model: {e}")
     raise RuntimeError(f"Error loading the model: {e}")
 
 # Start flask app
@@ -36,12 +43,15 @@ try:
     jwt = JWTManager(app)
     
 except KeyError:
+    logger.error("JWT_SECRET_KEY environment variable not set")
     raise RuntimeError("JWT_SECRET_KEY environment variable not set")
 
 # Initialize the database
 try:
     init_db()
+    logger.info("Database initialized successfully")
 except Exception as e:
+    logger.error(f"Error initializing the database: {e}")
     raise RuntimeError(f"Error initializing the database: {e}")
 
 '''
@@ -65,12 +75,15 @@ def generate_text():
         outputs = pipe(prompt, num_return_sequences=1)
         generated_text = outputs[0]["generated_text"]
         
+        logger.debug(f"Generated text: {generated_text}")
+        
         # Save the question in the database
         insert_question(prompt, generated_text)   
             
         return jsonify({"generated_text": generated_text})
     
     except Exception as e:
+        logger.error(f"Error generating text: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -84,10 +97,13 @@ def get_historic():
     try:
         # Get data from the database
         historic = get_questions()
+        
+        logger.debug(f"Historic: {historic}")
             
         return jsonify({"historic": historic})
     
     except Exception as e:
+        logger.error(f"Error getting historic: {e}")
         return jsonify({"error": str(e)}), 500
     
 
@@ -118,10 +134,13 @@ def change_config():
             tokenizer=tokenizer, 
             device=0 if device == "cuda" else -1
         )
+        
+        logger.debug(f"Configuration applied: {data}")
             
         return jsonify("Applied Configuration")
     
     except Exception as e:
+        logger.error(f"Error changing configuration: {e}")
         return jsonify({"error": str(e)}), 500
     
 
@@ -131,6 +150,7 @@ def login():
     #For simplicity, this method will not check any credentials, just give the token
     
     access_token = create_access_token(identity="admin")
+    logger.debug(f"Token generated")
     return jsonify(access_token=access_token)
     
 @app.route('/docs')
